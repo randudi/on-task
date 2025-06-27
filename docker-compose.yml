@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  agent-ui:
+    build:
+      context: ./agent-ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./agent-ui:/app
+    working_dir: /app
+    command: yarn start
+    depends_on:
+      graphql-mcp:
+        condition: service_started
+
+  graphql-mcp:
+    build:
+      context: ./graphql-mcp
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./graphql-mcp:/app
+    environment:
+      LOG_LEVEL: INFO
+      HTTP_PORT: 8000
+      HOST: "graphql-mcp"
+      IS_DOCKER: "true"
